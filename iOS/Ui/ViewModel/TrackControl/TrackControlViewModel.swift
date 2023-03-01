@@ -9,6 +9,8 @@ import AVFoundation
 
 class TrackControlViewModel: ObservableObject, Identifiable {
     
+    private let dataManager = CoreDataMultitrackManager()
+    
     private(set) var id: UUID
     private var player: AVAudioPlayer
     private var track: Track
@@ -70,6 +72,7 @@ class TrackControlViewModel: ObservableObject, Identifiable {
         set {
             self.track.config.volume = newValue/100
             self.player.volume = newValue/100
+            self.dataManager.updateTrack(self.track)
             objectWillChange.send()
         }
     }
@@ -81,6 +84,7 @@ class TrackControlViewModel: ObservableObject, Identifiable {
         set {
             self.track.config.pan = newValue.rawValue
             self.player.pan = newValue.rawValue
+            self.dataManager.updateTrack(self.track)
             objectWillChange.send()
         }
     }
