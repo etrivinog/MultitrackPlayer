@@ -13,9 +13,11 @@ struct SequenceControlsScreen: View {
         ScrollView(.horizontal) {
             HStack {
                 Spacer()
-                ForEach(self.viewModel.trackControllers) { controller in
-                    TrackControl(viewModel: viewModel.trackControllers[controller.id])
-                    Spacer()
+                ForEach(self.viewModel.trackControllers.map({ $0.value })) { controller in
+                    if let trackController = viewModel.trackControllers[controller.id] {
+                        TrackControl(viewModel: trackController)
+                        Spacer()
+                    }
                 }
             }
             .frame(minHeight: 50, maxHeight: 200)
@@ -26,9 +28,9 @@ struct SequenceControlsScreen: View {
 struct Faders_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = DashboardViewModel()
-        viewModel.appendTrackController(with: Track(id: 1, name: "Click", url: URL(fileURLWithPath: "/"), config: .init(pan: 0, volume: 0.5)))
-        viewModel.appendTrackController(with: Track(id: 2, name: "Sequence", url: URL(fileURLWithPath: "/"), config: .init(pan: 0, volume: 0.5)))
-        viewModel.appendTrackController(with: Track(id: 3, name: "Keys", url: URL(fileURLWithPath: "/"), config: .init(pan: 0, volume: 0.5)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Sequence", relativePath: "", config: .init(pan: 0, volume: 0.5)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Keys", relativePath: "", config: .init(pan: 0, volume: 0.5)))
         return SequenceControlsScreen(viewModel: viewModel)
             .previewInterfaceOrientation(.landscapeLeft)
     }

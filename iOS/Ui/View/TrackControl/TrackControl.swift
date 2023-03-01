@@ -33,7 +33,7 @@ struct TrackControl: View {
 
 struct Fader_Previews: PreviewProvider {
     static var previews: some View {
-        TrackControl(viewModel: TrackControlViewModel(track: Track(id: 1, name: "Click", url: URL(fileURLWithPath: ""), config: .init(pan: 0, volume: 0.5))))
+        TrackControl(viewModel: TrackControlViewModel(track: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5))))
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }

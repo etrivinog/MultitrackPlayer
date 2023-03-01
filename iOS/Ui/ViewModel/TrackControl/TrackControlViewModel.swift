@@ -9,7 +9,7 @@ import AVFoundation
 
 class TrackControlViewModel: ObservableObject, Identifiable {
     
-    private(set) var id: Int
+    private(set) var id: UUID
     private var player: AVAudioPlayer
     private var track: Track
     
@@ -26,8 +26,11 @@ class TrackControlViewModel: ObservableObject, Identifiable {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
 
+            let newTrackPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(track.relativePath)
+            let newTrackUrl = URL(fileURLWithPath: newTrackPath)
+            
             /* The following line is required for the player to work on iOS 11. Change the file type accordingly*/
-            player = try AVAudioPlayer(contentsOf: track.url, fileTypeHint: AVFileType.mp3.rawValue)
+            player = try AVAudioPlayer(contentsOf: newTrackUrl, fileTypeHint: AVFileType.mp3.rawValue)
 
             /* iOS 10 and earlier require the following line:
             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3) */

@@ -9,10 +9,14 @@
 /* Begin PBXBuildFile section */
 		2124070628CAF36C00A85A14 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124070528CAF36C00A85A14 /* DocumentPicker.swift */; };
 		2124070A28CB030A00A85A14 /* TrackControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124070928CB030900A85A14 /* TrackControlViewModel.swift */; };
-		2124070F28CB0BF500A85A14 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124070E28CB0BF500A85A14 /* Track.swift */; };
 		2124071128CBC99D00A85A14 /* PanSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124071028CBC99D00A85A14 /* PanSelector.swift */; };
-		2124071628CBE74000A85A14 /* Multitrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124071528CBE74000A85A14 /* Multitrack.swift */; };
 		21469CAB28CA22D100FA72DC /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21469CAA28CA22D100FA72DC /* DashboardViewModel.swift */; };
+		219215CF29AA76B900EB7937 /* Multitrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124071528CBE74000A85A14 /* Multitrack.swift */; };
+		219215D029AA76BC00EB7937 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2124070E28CB0BF500A85A14 /* Track.swift */; };
+		219215D129AA76DB00EB7937 /* Sequences.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 219215C929AA697B00EB7937 /* Sequences.xcdatamodeld */; };
+		219215D529AA813D00EB7937 /* MultitrackLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219215D429AA813D00EB7937 /* MultitrackLocalRepository.swift */; };
+		219215D929AD7AA800EB7937 /* CoreDataMultitrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219215D829AD7AA800EB7937 /* CoreDataMultitrackManager.swift */; };
+		219215DB29AD7BEF00EB7937 /* MultitrackRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219215DA29AD7BEF00EB7937 /* MultitrackRepository.swift */; };
 		21F0D54928CA060700814C1C /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F0D54828CA060700814C1C /* Tests_iOS.swift */; };
 		21F0D54B28CA060700814C1C /* Tests_iOSLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F0D54A28CA060700814C1C /* Tests_iOSLaunchTests.swift */; };
 		21F0D55528CA060700814C1C /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F0D55428CA060700814C1C /* Tests_macOS.swift */; };
@@ -43,6 +47,10 @@
 		2124071028CBC99D00A85A14 /* PanSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanSelector.swift; sourceTree = "<group>"; };
 		2124071528CBE74000A85A14 /* Multitrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Multitrack.swift; sourceTree = "<group>"; };
 		21469CAA28CA22D100FA72DC /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		219215CA29AA697B00EB7937 /* Sequences.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Sequences.xcdatamodel; sourceTree = "<group>"; };
+		219215D429AA813D00EB7937 /* MultitrackLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitrackLocalRepository.swift; sourceTree = "<group>"; };
+		219215D829AD7AA800EB7937 /* CoreDataMultitrackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMultitrackManager.swift; sourceTree = "<group>"; };
+		219215DA29AD7BEF00EB7937 /* MultitrackRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitrackRepository.swift; sourceTree = "<group>"; };
 		21F0D53028CA060300814C1C /* Play_SecuenceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play_SecuenceApp.swift; sourceTree = "<group>"; };
 		21F0D53128CA060300814C1C /* DashboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardScreen.swift; sourceTree = "<group>"; };
 		21F0D53228CA060700814C1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -92,13 +100,16 @@
 			path = DocumentPicker;
 			sourceTree = "<group>";
 		};
-		2124070B28CB0BA500A85A14 /* Models */ = {
+		2124070B28CB0BA500A85A14 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				219215C929AA697B00EB7937 /* Sequences.xcdatamodeld */,
+				219215D629AD7A5600EB7937 /* CoreDataManager */,
+				219215D229AA811100EB7937 /* Repository */,
 				2124071428CBE69100A85A14 /* Multitrack */,
 				2124070C28CB0BC600A85A14 /* Track */,
 			);
-			path = Models;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		2124070C28CB0BC600A85A14 /* Track */ = {
@@ -142,6 +153,39 @@
 			path = Dashboard;
 			sourceTree = "<group>";
 		};
+		219215D229AA811100EB7937 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				219215DA29AD7BEF00EB7937 /* MultitrackRepository.swift */,
+				219215D329AA812900EB7937 /* Multitrack */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		219215D329AA812900EB7937 /* Multitrack */ = {
+			isa = PBXGroup;
+			children = (
+				219215D429AA813D00EB7937 /* MultitrackLocalRepository.swift */,
+			);
+			path = Multitrack;
+			sourceTree = "<group>";
+		};
+		219215D629AD7A5600EB7937 /* CoreDataManager */ = {
+			isa = PBXGroup;
+			children = (
+				219215D729AD7A6600EB7937 /* Multitrack */,
+			);
+			path = CoreDataManager;
+			sourceTree = "<group>";
+		};
+		219215D729AD7A6600EB7937 /* Multitrack */ = {
+			isa = PBXGroup;
+			children = (
+				219215D829AD7AA800EB7937 /* CoreDataMultitrackManager.swift */,
+			);
+			path = Multitrack;
+			sourceTree = "<group>";
+		};
 		21F0D52A28CA060200814C1C = {
 			isa = PBXGroup;
 			children = (
@@ -157,8 +201,7 @@
 		21F0D52F28CA060300814C1C /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				2124070B28CB0BA500A85A14 /* Models */,
-				21F0D56D28CA081900814C1C /* Commons */,
+				2124070B28CB0BA500A85A14 /* Model */,
 				21F0D56C28CA07E100814C1C /* Ui */,
 				21F0D53028CA060300814C1C /* Play_SecuenceApp.swift */,
 				21F0D53228CA060700814C1C /* Assets.xcassets */,
@@ -205,6 +248,7 @@
 		21F0D56C28CA07E100814C1C /* Ui */ = {
 			isa = PBXGroup;
 			children = (
+				21F0D56D28CA081900814C1C /* Commons */,
 				21F0D57828CA1EA600814C1C /* View */,
 				21F0D57928CA1ECF00814C1C /* ViewModel */,
 			);
@@ -396,12 +440,16 @@
 				2124070A28CB030A00A85A14 /* TrackControlViewModel.swift in Sources */,
 				2124071128CBC99D00A85A14 /* PanSelector.swift in Sources */,
 				21469CAB28CA22D100FA72DC /* DashboardViewModel.swift in Sources */,
-				2124070F28CB0BF500A85A14 /* Track.swift in Sources */,
 				21F0D57028CA084E00814C1C /* Header.swift in Sources */,
+				219215D129AA76DB00EB7937 /* Sequences.xcdatamodeld in Sources */,
 				2124070628CAF36C00A85A14 /* DocumentPicker.swift in Sources */,
+				219215DB29AD7BEF00EB7937 /* MultitrackRepository.swift in Sources */,
 				21F0D57728CA1C0500814C1C /* SequenceControlsScreen.swift in Sources */,
-				2124071628CBE74000A85A14 /* Multitrack.swift in Sources */,
+				219215CF29AA76B900EB7937 /* Multitrack.swift in Sources */,
+				219215D929AD7AA800EB7937 /* CoreDataMultitrackManager.swift in Sources */,
 				21F0D55828CA060700814C1C /* Play_SecuenceApp.swift in Sources */,
+				219215D029AA76BC00EB7937 /* Track.swift in Sources */,
+				219215D529AA813D00EB7937 /* MultitrackLocalRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -729,6 +777,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		219215C929AA697B00EB7937 /* Sequences.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				219215CA29AA697B00EB7937 /* Sequences.xcdatamodel */,
+			);
+			currentVersion = 219215CA29AA697B00EB7937 /* Sequences.xcdatamodel */;
+			path = Sequences.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 21F0D52B28CA060200814C1C /* Project object */;
 }

@@ -15,7 +15,7 @@ struct DashboardScreen: View {
         VStack(spacing: 0) {
             Header()
             Spacer()
-            VStack {
+            VStack(spacing: 0) {
                 HStack {
                     Text("Selected multitrack: ")
                     Text(self.viewModel.getSelectedMultitrack()?.name ?? "Ninguno")
@@ -23,9 +23,10 @@ struct DashboardScreen: View {
                     Spacer()
                 }
                 controlButtons
+                Divider().padding(.top, 8)
                 ScrollView(.horizontal) {
                     HStack {
-                        ForEach(self.viewModel.multitracks) { multitrack in
+                        ForEach(self.viewModel.multitracks.map() { $0.value }) { multitrack in
                             Button(action: {
                                 self.viewModel.selectMultitrack(multitrack.id)
                             }){
@@ -43,49 +44,23 @@ struct DashboardScreen: View {
                         Spacer()
                     }
                 }
-                .frame(minHeight:30, maxHeight: 70)
+                .frame(minHeight:30, maxHeight: 40)
+                Divider().padding(.bottom, 8)
                 Spacer()
                 SequenceControlsScreen(viewModel: viewModel)
             }
             .padding(.horizontal, 30)
         }
+        .onAppear(){
+            self.viewModel.onAppear()
+        }
         .sheet(isPresented: $showPicker) {
             DocumentPicker() { urls in
-                var multitrack = Multitrack(id: self.viewModel.multitracks.count, name: "Multitrack \(self.viewModel.multitracks.count)")
-                for url in urls {
-                    let savedUrl = saveTrack(multitrackId: multitrack.id, in: url)
-                    let track = Track(
-                        id: multitrack.tracks.count,
-                        name: url.standardizedFileURL.deletingPathExtension().lastPathComponent,
-                        url: savedUrl,
-                        config: .init(pan: 0, volume: 0.5)
-                    )
-                    multitrack.tracks.append(track)
-                }
-                self.viewModel.multitracks.append(multitrack)
-                self.viewModel.selectMultitrack(multitrack.id)
+                self.viewModel.createMultitrack(with: urls)
             }
         }
     }
-    func saveTrack(multitrackId: Int, in url: URL) -> URL {
-        
-//        let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        let urlToSave = documentsUrl.appendingPathComponent(url.lastPathComponent)
-        
-        
-        let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(url.lastPathComponent)
-        print(paths)
-        
-        let encryptedData = NSData(contentsOf: url)
-        if(encryptedData != nil){
-            
-            let fileManager = FileManager.default
-            fileManager.createFile(atPath: paths as String, contents: encryptedData as Data?, attributes: nil)
-            
-        }
-        return URL(fileURLWithPath: paths)
-    }
-
+    
     @ViewBuilder
     var controlButtons: some View {
         HStack {
@@ -116,8 +91,9 @@ struct DashboardScreen: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = DashboardViewModel()
-        viewModel.multitracks.append(.init(id: 1, name: "Rey de reyes", tracks: [.init(id: 1, name: "Click", url: URL(fileURLWithPath: ""), config: .init(pan: 0, volume: 0.5))]))
-        viewModel.appendTrackController(with: Track(id: 1, name: "Click", url: URL(fileURLWithPath: ""), config: .init(pan: -1, volume: 0.5)) )
+        let id1 = UUID()
+        viewModel.multitracks[id1] = (.init(id: id1, name: "Rey de reyes", tracks: [.init(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5))]))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: -1, volume: 0.5)) )
         return DashboardScreen(viewModel: viewModel)
             .previewInterfaceOrientation(.landscapeLeft)
     }
