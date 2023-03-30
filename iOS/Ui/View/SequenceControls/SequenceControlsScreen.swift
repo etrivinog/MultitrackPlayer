@@ -28,9 +28,9 @@ struct SequenceControlsScreen: View {
 struct Faders_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = DashboardViewModel()
-        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5)))
-        viewModel.appendTrackController(using: Track(id: UUID(), name: "Sequence", relativePath: "", config: .init(pan: 0, volume: 0.5)))
-        viewModel.appendTrackController(using: Track(id: UUID(), name: "Keys", relativePath: "", config: .init(pan: 0, volume: 0.5)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Sequence", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false)))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Keys", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false)))
         return SequenceControlsScreen(viewModel: viewModel)
             .previewInterfaceOrientation(.landscapeLeft)
     }

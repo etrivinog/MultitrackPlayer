@@ -39,17 +39,21 @@ final class DashboardViewModel: ObservableObject {
         }
     }
     
-    func createMultitrack(with urls: [URL]) {
+    func deleteMultitrack(_ multitrackId: UUID) {
+        if let selectedMultitrackIndex = self.selectedMultitrackIndex,
+           multitrackId == selectedMultitrackIndex {
+            self.selectedMultitrackIndex = nil
+        }
+        self.multitracks.removeValue(forKey: multitrackId)
+        self.multitrackRepository.deleteMultitrack(multitrackId)
+    }
+    
+    
+    func createMultitrack(with tracksTmpUrls: [URL]) {
         var multitrack = Multitrack(id: UUID(),
                                     name: "Multitrack \(self.multitracks.count)")
-        for url in urls {
-            let savedUrl = self.saveTrack(multitrackId: multitrack.id, in: url)
-            let track = Track(
-                id: UUID(),
-                name: url.standardizedFileURL.deletingPathExtension().lastPathComponent,
-                relativePath: multitrack.id.uuidString.appending(url.lastPathComponent),
-                config: .init(pan: 0, volume: 0.5)
-            )
+        for tmpUrl in tracksTmpUrls {
+            let track = self.saveTrack(from: tmpUrl)
             multitrack.tracks.append(track)
         }
         self.multitracks[multitrack.id]  = multitrack
@@ -57,21 +61,28 @@ final class DashboardViewModel: ObservableObject {
         self.selectMultitrack(multitrack.id)
     }
     
-    private func saveTrack(multitrackId: UUID, in url: URL) -> URL {
+    private func saveTrack(from tmpUrl: URL) -> Track {
         
 //        let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 //        let urlToSave = documentsUrl.appendingPathComponent(url.lastPathComponent)
         
-        let paths = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(multitrackId.uuidString.appending(url.lastPathComponent))
-        print(paths)
+        let trackId = UUID()
+        let track = Track(
+            id: trackId,
+            name: tmpUrl.standardizedFileURL.deletingPathExtension().lastPathComponent,
+            relativePath: trackId.uuidString.appending(tmpUrl.lastPathComponent),
+            config: .init(pan: 0, volume: 0.5, isMuted: false)
+        )
         
-        let encryptedData = NSData(contentsOf: url)
+        let basePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(track.relativePath)
+        print(basePath)
+        
+        let encryptedData = NSData(contentsOf: tmpUrl)
         if(encryptedData != nil){
-            
             let fileManager = FileManager.default
-            fileManager.createFile(atPath: paths as String, contents: encryptedData as Data?, attributes: nil)
+            fileManager.createFile(atPath: basePath as String, contents: encryptedData as Data?, attributes: nil)
         }
-        return URL(fileURLWithPath: paths)
+        return track
     }
 
     func getSelectedMultitrack() -> Multitrack? {

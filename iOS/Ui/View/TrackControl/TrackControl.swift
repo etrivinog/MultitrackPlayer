@@ -13,6 +13,14 @@ struct TrackControl: View {
     var body: some View {
         VStack(spacing: 0.0) {
             PanSelector(selectedPan: $viewModel.trackPan)
+            Button(action: {
+                self.viewModel.toogleMute()
+            }, label: {
+                Image(systemName: viewModel.mute ? "speaker.slash.fill" : "speaker.fill")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+            })
+            .padding([.top, .bottom], 5)
             Text(String(format: "%.0f", viewModel.trackVolume))
                 .font(.system(size:12))
             GeometryReader { geo in
@@ -33,7 +41,7 @@ struct TrackControl: View {
 
 struct Fader_Previews: PreviewProvider {
     static var previews: some View {
-        TrackControl(viewModel: TrackControlViewModel(track: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5))))
+        TrackControl(viewModel: TrackControlViewModel(track: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false))))
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }

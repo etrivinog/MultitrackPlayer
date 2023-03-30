@@ -65,6 +65,7 @@ class CoreDataMultitrackManager {// Get Core Data managed object context
                 trackDao.relativePath = track.relativePath
                 trackDao.volume = track.config.volume
                 trackDao.pan = track.config.pan
+                trackDao.mute = track.config.isMuted
                 self.commit()
             }
         } catch {
@@ -99,5 +100,21 @@ class CoreDataMultitrackManager {// Get Core Data managed object context
             self.context.delete(multitrackDao)
         }
         self.commit()
+    }
+    
+    func deleteMultitrack(_ multitrackId: UUID) {
+        let fetchRequest: NSFetchRequest<MultitrackDao> = MultitrackDao.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", multitrackId as CVarArg)
+        do {
+            if let multitrackDao = try self.context.fetch(fetchRequest).first {
+                self.loadTracks(for: multitrackDao).forEach() { trackDao in
+                    self.context.delete(trackDao)
+                }
+                self.context.delete(multitrackDao)
+                self.commit()
+            }
+        } catch {
+            print("Unable to Delete MultitrackDao in deleteMultitrack, (\(error))")
+        }
     }
 }

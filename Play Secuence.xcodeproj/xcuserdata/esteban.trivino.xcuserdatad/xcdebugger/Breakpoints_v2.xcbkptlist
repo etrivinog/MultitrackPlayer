@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "36A5CD9C-E467-4FB0-9056-EFCA199DD029"
+            uuid = "4977FE60-B3CC-44B4-9A09-ACD3A32302FD"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "iOS/Ui/ViewModel/TrackControl/TrackControlViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "buildPlayer(track:)"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "toogleMute()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

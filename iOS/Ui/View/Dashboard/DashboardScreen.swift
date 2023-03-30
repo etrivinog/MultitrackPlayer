@@ -92,8 +92,8 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = DashboardViewModel()
         let id1 = UUID()
-        viewModel.multitracks[id1] = (.init(id: id1, name: "Rey de reyes", tracks: [.init(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5))]))
-        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: -1, volume: 0.5)) )
+        viewModel.multitracks[id1] = (.init(id: id1, name: "Rey de reyes", tracks: [.init(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false))]))
+        viewModel.appendTrackController(using: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: -1, volume: 0.5, isMuted: false)) )
         return DashboardScreen(viewModel: viewModel)
             .previewInterfaceOrientation(.landscapeLeft)
     }
