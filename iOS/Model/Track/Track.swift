@@ -17,6 +17,11 @@ struct Track: Identifiable {
     struct Config {
         var pan: Float
         var volume: Float
+        var isMuted: Bool
+        
+        var volumeWithMute: Float {
+            isMuted ? 0 : volume
+        }
     }
 }
 
@@ -35,6 +40,6 @@ extension Track {
 
 extension TrackDao {
     func mapToTrack() -> Track {
-        Track(id: self.id ?? UUID(), name: self.name ?? "", relativePath: self.relativePath ?? "", config: .init(pan: self.pan, volume: self.volume))
+        Track(id: self.id ?? UUID(), name: self.name ?? "", relativePath: self.relativePath ?? "", config: .init(pan: self.pan, volume: self.volume, isMuted: self.mute))
     }
 }

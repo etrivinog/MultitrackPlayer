@@ -36,7 +36,7 @@ class TrackControlViewModel: ObservableObject, Identifiable {
 
             /* iOS 10 and earlier require the following line:
             player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3) */
-            player.setVolume(track.config.volume, fadeDuration: .infinity)
+            player.setVolume(track.config.volumeWithMute, fadeDuration: .infinity)
             player.prepareToPlay()
             
         } catch let error {
@@ -51,9 +51,33 @@ class TrackControlViewModel: ObservableObject, Identifiable {
         self.track.name
     }
     
+    var mute: Bool {
+        self.track.config.isMuted
+    }
+    
 // MARK: Player methods
     func play(at interval: TimeInterval) {
         self.player.play(atTime: interval)
+    }
+    
+    private func muteTrack() {
+        self.player.setVolume(0, fadeDuration: .zero)
+        self.track.config.isMuted = true
+    }
+    
+    private func unmuteTrack() {
+        self.player.setVolume(self.track.config.volume, fadeDuration: .zero)
+        self.track.config.isMuted = false
+    }
+    
+    func toogleMute() {
+        if self.player.volume == 0 {
+            self.unmuteTrack()
+        } else {
+            self.muteTrack()
+        }
+        self.updateTrack()
+        self.objectWillChange.send()
     }
     
     func pauseTrack() {
@@ -67,12 +91,16 @@ class TrackControlViewModel: ObservableObject, Identifiable {
     
     var trackVolume: Float {
         get {
+            self.track.config.isMuted ?
+            self.track.config.volume * 100 :
             self.player.volume * 100
         }
         set {
+            if !self.track.config.isMuted {
+                self.player.volume = newValue/100
+            }
             self.track.config.volume = newValue/100
-            self.player.volume = newValue/100
-            self.dataManager.updateTrack(self.track)
+            self.updateTrack()
             objectWillChange.send()
         }
     }
@@ -84,9 +112,13 @@ class TrackControlViewModel: ObservableObject, Identifiable {
         set {
             self.track.config.pan = newValue.rawValue
             self.player.pan = newValue.rawValue
-            self.dataManager.updateTrack(self.track)
+            self.updateTrack()
             objectWillChange.send()
         }
+    }
+    
+    private func updateTrack() {
+        self.dataManager.updateTrack(self.track)
     }
     
     var currentTime: TimeInterval {
