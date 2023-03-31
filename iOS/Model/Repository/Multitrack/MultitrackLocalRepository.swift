@@ -36,8 +36,8 @@ class MultitrackLocalRepository: MultitrackRepository {
         Multitrack(id: id, name: "", tracks: [])
     }
     
-    func deleteMultitrack(_ multitrack: Multitrack) {
-        self.dataManager.deleteMultitrack(multitrack.id)
+    func deleteMultitrack(_ multitrackId: UUID) {
+        self.dataManager.deleteMultitrack(multitrackId)
         self.dataManager.commit()
     }
 }

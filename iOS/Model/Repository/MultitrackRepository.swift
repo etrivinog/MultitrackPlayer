@@ -11,5 +11,5 @@ protocol MultitrackRepository {
     func saveMultitrack(_ multitrack: Multitrack)
     func loadMultitracks() -> Dictionary<UUID, Multitrack>
     func loadMultitrack(id: UUID) -> Multitrack
-    func deleteMultitrack(_ multitrack: Multitrack)
+    func deleteMultitrack(_ multitrackId: UUID)
 }

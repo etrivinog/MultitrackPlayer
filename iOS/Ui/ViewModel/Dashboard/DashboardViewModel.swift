@@ -48,6 +48,12 @@ final class DashboardViewModel: ObservableObject {
         self.multitrackRepository.deleteMultitrack(multitrackId)
     }
     
+    func deleteSelectedMultitrack() {
+        if let selectedMultitrackIndex = self.selectedMultitrackIndex {
+            self.deleteMultitrack(selectedMultitrackIndex)
+        }
+    }
+    
     
     func createMultitrack(with tracksTmpUrls: [URL]) {
         var multitrack = Multitrack(id: UUID(),

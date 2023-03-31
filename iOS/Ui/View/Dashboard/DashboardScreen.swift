@@ -10,6 +10,7 @@ import SwiftUI
 struct DashboardScreen: View {
     @State private var showPicker: Bool = false
     @StateObject var viewModel = DashboardViewModel()
+    @State private var presentModalDelete: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -59,6 +60,11 @@ struct DashboardScreen: View {
                 self.viewModel.createMultitrack(with: urls)
             }
         }
+        .confirmationDialog("¿Deseas eliminar el multitrack?", isPresented: self.$presentModalDelete) {
+            Button("Eliminar multitrack", role: .destructive) {
+                self.viewModel.deleteSelectedMultitrack()
+            }
+        }
     }
     
     @ViewBuilder
@@ -83,6 +89,18 @@ struct DashboardScreen: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 30, alignment: .center)
+            }
+            if let _ = self.viewModel.selectedMultitrackIndex {
+                Spacer()
+                Button(action: {
+                    self.presentModalDelete.toggle()
+                }) {
+                    Image(systemName: "trash")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30, alignment: .center)
+                        .foregroundColor(.red)
+                }
             }
         }
     }
