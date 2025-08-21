@@ -11,6 +11,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var multitracks = Dictionary<UUID, Multitrack>()
     @Published var trackControllers = Dictionary<UUID, TrackControlViewModel>()
     private(set) var selectedMultitrackIndex: UUID?
+    private var multiTrackPlayer: MultiTrackPlayer?
     
     let multitrackRepository: MultitrackRepository = MultitrackLocalRepository()
     
@@ -26,6 +27,10 @@ final class DashboardViewModel: ObservableObject {
     
     func selectMultitrack(_ multitrackId: UUID) {
         if self.selectedMultitrackIndex != multitrackId {
+            
+            guard let multitrack = self.multitracks[multitrackId] else { return }
+            multiTrackPlayer = .init(multitrack: multitrack)
+            
             self.selectedMultitrackIndex = multitrackId
             self.stopTracks()
             trackControllers.removeAll()
@@ -100,31 +105,35 @@ final class DashboardViewModel: ObservableObject {
     }
     
     func appendTrackController(using track: Track) {
-        self.trackControllers[track.id] = TrackControlViewModel(track: track)
+        guard let playerNode = multiTrackPlayer?.getPlayerNode(forTrackID: track.id) else { return }
+        self.trackControllers[track.id] = TrackControlViewModel(track: track, player: playerNode)
     }
     
     func playTracks() {
-        if let firstController = trackControllers.first?.value {
-            let timeToPlay = firstController.deviceCurrentTime + 1
-            for controller in trackControllers.values.map({$0}) {
-                controller.play(at: timeToPlay)
-            }
-        }
+        multiTrackPlayer?.play()
+//        if let firstController = trackControllers.first?.value {
+//            let timeToPlay = firstController.deviceCurrentTime + 1
+//            for controller in trackControllers.values.map({$0}) {
+//                controller.play(at: timeToPlay)
+//            }
+//        }
     }
     
     func pauseTracks() {
-        if let firstController = trackControllers.first?.value {
-            let currentPosition = firstController.currentTime
-            for controller in trackControllers.values.map({$0}) {
-                controller.pauseTrack()
-                controller.currentTime = currentPosition
-            }
-        }
+        multiTrackPlayer?.pause()
+//        if let firstController = trackControllers.first?.value {
+//            let currentPosition = firstController.currentTime
+//            for controller in trackControllers.values.map({$0}) {
+//                controller.pauseTrack()
+//                controller.currentTime = currentPosition
+//            }
+//        }
     }
     
     func stopTracks() {
-        for controller in trackControllers {
-            controller.value.stopTrack()
-        }
+        multiTrackPlayer?.stop()
+//        for controller in trackControllers {
+//            controller.value.stopTrack()
+//        }
     }
 }

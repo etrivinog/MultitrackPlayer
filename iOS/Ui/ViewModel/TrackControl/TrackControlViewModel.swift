@@ -9,41 +9,23 @@ import AVFoundation
 
 class TrackControlViewModel: ObservableObject, Identifiable {
     
+    @Published var uiPan: PanOptions
+    
     private let dataManager = CoreDataMultitrackManager()
     
     private(set) var id: UUID
-    private var player: AVAudioPlayer
+    private var player: AVAudioPlayerNode
     private var track: Track
+    private let audioQueue = DispatchQueue(label: "AudioControlQueue",
+                                           qos: .userInitiated,
+                                           attributes: .concurrent)
     
-    init(track: Track) {
+    init(track: Track,
+         player: AVAudioPlayerNode) {
         self.track = track
         self.id = track.id
-        self.player = TrackControlViewModel.buildPlayer(track: track)
-    }
-    
-    //TODO: Mover de lugar
-    class func buildPlayer(track: Track) -> AVAudioPlayer {
-        var player: AVAudioPlayer
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
-
-            let newTrackPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(track.relativePath)
-            let newTrackUrl = URL(fileURLWithPath: newTrackPath)
-            
-            /* The following line is required for the player to work on iOS 11. Change the file type accordingly*/
-            player = try AVAudioPlayer(contentsOf: newTrackUrl, fileTypeHint: AVFileType.mp3.rawValue)
-
-            /* iOS 10 and earlier require the following line:
-            player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3) */
-            player.setVolume(track.config.volumeWithMute, fadeDuration: .infinity)
-            player.prepareToPlay()
-            
-        } catch let error {
-            player = AVAudioPlayer()
-            print(error.localizedDescription)
-        }
-        return player
+        self.player = player
+        self.uiPan = PanOptions(from: track.config.pan)
     }
     
 // MARK: Track methods
@@ -56,38 +38,44 @@ class TrackControlViewModel: ObservableObject, Identifiable {
     }
     
 // MARK: Player methods
-    func play(at interval: TimeInterval) {
-        self.player.play(atTime: interval)
-    }
+//    func play(at interval: TimeInterval) {
+//        self.player.play()
+//    }
     
     private func muteTrack() {
-        self.player.setVolume(0, fadeDuration: .zero)
+//        self.player.setVolume(0, fadeDuration: .zero)
+        player.volume = 0
         self.track.config.isMuted = true
     }
     
     private func unmuteTrack() {
-        self.player.setVolume(self.track.config.volume, fadeDuration: .zero)
+//        self.player.setVolume(self.track.config.volume, fadeDuration: .zero)
+        player.volume = self.track.config.volume
         self.track.config.isMuted = false
     }
     
     func toogleMute() {
-        if self.player.volume == 0 {
-            self.unmuteTrack()
-        } else {
-            self.muteTrack()
+        audioQueue.async {
+            if self.player.volume == 0 {
+                self.unmuteTrack()
+            } else {
+                self.muteTrack()
+            }
+            self.updateTrack()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
-        self.updateTrack()
-        self.objectWillChange.send()
     }
     
     func pauseTrack() {
         player.pause()
     }
     
-    func stopTrack() {
-        player.stop()
-        player.currentTime = 0
-    }
+//    func stopTrack() {
+//        player.stop()
+//        player.currentTime = 0
+//    }
     
     var trackVolume: Float {
         get {
@@ -96,58 +84,60 @@ class TrackControlViewModel: ObservableObject, Identifiable {
             self.player.volume * 100
         }
         set {
-            if !self.track.config.isMuted {
-                self.player.volume = newValue/100
+            audioQueue.async {
+                if !self.track.config.isMuted {
+                    self.player.volume = newValue/100
+                }
+                self.track.config.volume = newValue/100
+                self.updateTrack()
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                }
             }
-            self.track.config.volume = newValue/100
-            self.updateTrack()
-            objectWillChange.send()
         }
     }
     
-    var trackPan: PanOptions {
-        get {
-            self.converToPanOptions(from: self.track.config.pan)
-        }
-        set {
-            self.track.config.pan = newValue.rawValue
-            self.player.pan = newValue.rawValue
+    func setPan(_ option: PanOptions) {
+        uiPan = option // solo para refrescar la UI
+        audioQueue.async { [weak self] in
+            guard let self = self else { return }
+            self.track.config.pan = option.rawValue
+            self.player.pan = option.rawValue
             self.updateTrack()
-            objectWillChange.send()
         }
     }
-    
+
     private func updateTrack() {
         self.dataManager.updateTrack(self.track)
     }
     
-    var currentTime: TimeInterval {
-        get {
-            self.player.currentTime
-        }
-        set {
-            self.player.currentTime = newValue
-        }
-    }
-    
-    var deviceCurrentTime: TimeInterval {
-        self.player.deviceCurrentTime
-    }
+//    var currentTime: TimeInterval {
+//        get {
+//            self.player.currentTime
+//        }
+//        set {
+//            self.player.currentTime = newValue
+//        }
+//    }
+//    
+//    var deviceCurrentTime: TimeInterval {
+//        self.player.deviceCurrentTime
+//    }
     
 // MARK: Pan Options
     enum PanOptions: Float {
         case left = -1
         case center = 0
         case right = 1
-    }
-    
-    private func converToPanOptions(from float: Float) -> PanOptions {
-        if float == 0.0 {
-            return .center
-        } else if float > 0 {
-            return .right
-        } else {
-            return .left
+        
+        init(from float: Float) {
+            if float == 0.0 {
+                self = .center
+            } else if float > 0 {
+                self = .right
+            } else {
+                self = .left
+            }
         }
     }
 }

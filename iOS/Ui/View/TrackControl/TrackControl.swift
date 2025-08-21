@@ -12,7 +12,9 @@ struct TrackControl: View {
     
     var body: some View {
         VStack(spacing: 0.0) {
-            PanSelector(selectedPan: $viewModel.trackPan)
+            PanSelector(selectedPan: $viewModel.uiPan) { selectedPan in
+                viewModel.setPan(selectedPan)
+            }
             Button(action: {
                 self.viewModel.toogleMute()
             }, label: {
@@ -41,7 +43,16 @@ struct TrackControl: View {
 
 struct Fader_Previews: PreviewProvider {
     static var previews: some View {
-        TrackControl(viewModel: TrackControlViewModel(track: Track(id: UUID(), name: "Click", relativePath: "", config: .init(pan: 0, volume: 0.5, isMuted: false))))
+        TrackControl(
+            viewModel: TrackControlViewModel(
+                track: Track(
+                    id: UUID(),
+                    name: "Click",
+                    relativePath: "",
+                    config: .init(pan: 0, volume: 0.5, isMuted: false)
+                ), player: AVFoundationStubs.emptyAudioPlayerNode
+            )
+        )
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
